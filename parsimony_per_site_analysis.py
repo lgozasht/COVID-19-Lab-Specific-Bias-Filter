@@ -133,7 +133,7 @@ print('metadata took {0} seconds'.format((time.time() - start_time)))
 start_time = time.time()
 
 print('Writing output files')
-with open('{0}/flagged_snps_by_lab.out'.format(args['o']), 'w') as f:
+with open('{0}/flagged_snps_by_lab.tsv'.format(args['o']), 'w') as f:
     f.write('source\tlab\tsnp\tref\talt\tglobal ref\tglobal alt\tfisher exact\tproportion of calls\tMAF\n')
 
 altDic = {}
@@ -171,7 +171,7 @@ for ori in subAccessionDic:
 
 snpDic = {}
 
-with open('{0}/flagged_snps_by_lab.out'.format(args['o']), 'a') as f:
+with open('{0}/flagged_snps_by_lab.tsv'.format(args['o']), 'a') as f:
     for ori in refDic:
         for snp in refDic[ori]:
             oddsratio, pvalue = stats.fisher_exact(np.array([[refDic[ori][snp],altDic[ori][snp]],[globalRefCountDic[snp],globalAltCountDic[snp]]]))
@@ -216,13 +216,10 @@ for ori in oriAccessionDic:
             altDic[ori][snp] = altCount
 
 
-with open('{0}/flagged_snps_by_lab.out'.format(args['o']), 'a') as f:
+with open('{0}/flagged_snps_by_lab.tsv'.format(args['o']), 'a') as f:
     for ori in refDic:
         for snp in refDic[ori]:
             MAF = float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp]))
-            if snp == 'C22802G':
-                print('originating lab\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n'.format(ori, snp, refDic[ori][snp], altDic[ori][snp], globalRefCountDic[snp], globalAltCountDic[snp],pvalue,float(altDic[ori][snp])/float(globalAltCountDic[snp]),float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp])) ))
-
             oddsratio, pvalue = stats.fisher_exact(np.array([[refDic[ori][snp],altDic[ori][snp]],[globalRefCountDic[snp],globalAltCountDic[snp]]]))
             if (pvalue < 0.05 and MAF < 0.01 and float(altDic[ori][snp])/float(globalAltCountDic[snp]) > 0.1):
                 f.write('originating lab\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n'.format(ori, snp, refDic[ori][snp], altDic[ori][snp], globalRefCountDic[snp], globalAltCountDic[snp],pvalue,float(altDic[ori][snp])/float(globalAltCountDic[snp]),float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp])) ))
