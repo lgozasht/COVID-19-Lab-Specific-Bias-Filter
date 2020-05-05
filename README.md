@@ -13,10 +13,15 @@ Output:
 "flagged_snps_by_lab.tsv" a tab delimitted file displaying source, lab, snp, ref, alt, global ref, global alt, fisher exact, proportion of calls, MAF for each flagged snp where:
 
 source = "originating lab" or "submitting lab"
+
 lab = lab name
+
 snp = snp
+
 ref = reference allele count
+
 alt = alternate allele count
+
 global ref = global reference allele count
 global alt = global alternate allele count
 fisher exact = p value for fishers exact test assosiating lab specific with global allele frequency
