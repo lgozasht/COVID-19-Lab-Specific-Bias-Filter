@@ -23,9 +23,13 @@ ref = reference allele count
 alt = alternate allele count
 
 global ref = global reference allele count
+
 global alt = global alternate allele count
+
 fisher exact = p value for fishers exact test assosiating lab specific with global allele frequency
+
 proportion of calls = proportion of minor allele calls attributed to respective lab
+
 MAF = minor allele frequency
 
 "flagged_snps_summary.tsv" a tab delimitted file displaying each flagged snp and the reasoning underlying the flag
