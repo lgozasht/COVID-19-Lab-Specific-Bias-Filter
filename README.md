@@ -10,9 +10,7 @@ python3 parsimony_per_site_analysis.py -m [Path to metadata file] -p [Path to ne
 
 Output:
 
-"flagged_snps_by_lab.tsv" 
-
-a tab delimitted file displaying source, lab, snp, ref, alt, global ref, global alt, fisher exact, proportion of calls, MAF for each flagged snp where:
+flagged_snps_by_lab.tsv --a tab delimitted file displaying source, lab, snp, ref, alt, global ref, global alt, fisher exact, proportion of calls, MAF for each flagged snp where:
 
 source = "originating lab" or "submitting lab"
 
@@ -34,7 +32,5 @@ proportion of calls = proportion of minor allele calls attributed to respective 
 
 MAF = minor allele frequency
 
-"flagged_snps_summary.tsv" 
-
-a tab delimitted file displaying each flagged snp and the reasoning underlying the flag
+flagged_snps_summary.tsv --a tab delimitted file displaying each flagged snp and the reasoning underlying the flag
 
