@@ -67,8 +67,12 @@ parser.add_argument('-o', nargs='?', required=True,
                     help='Path to output directory')
 parser.add_argument('-b', nargs='?',
                     help='If TRUE program will also flag borderline suspicious variants that exhibit low minor allele frequency and are significantly assosiated with 1 or more particular lab')
+parser.add_argument('-min', nargs='?',
+                    help='minimum parsimony (must be an integer); default = 6') 
 
 args = vars(parser.parse_args())
+if args['min'] == None:
+    args['min'] = 6
 #print(args)
 
 
@@ -83,7 +87,7 @@ print('Reading parsimony file')
 with open('{0}'.format(args['p']), 'r') as f:
     for line in f:
         sp = line.split('\t')
-        if int(sp[-1]) >= 6:
+        if int(sp[-1]) >= int(args['min']):
             parsimonyDic[sp[2]] = sp[-1]
 
 #add VCF parser, perhaps use dataframe rather than dic of lists...
@@ -99,12 +103,12 @@ with open('{0}'.format(args['v']), 'r') as vcf:
             parsimonySourceDic['{0}'.format(line.split('\t')[2])] = {}
             for i in range(9,len(line.split('\t'))):
                 parsimonySourceDic['{0}'.format(line.split('\t')[2])][sourceList[i].split('|')[0]] = line.split('\t')[i].split(':')[0]
-print('VCF took {0} seconds'.format((time.time() - start_time)))
+print('VCF took {0} seconds, thats annoying'.format((time.time() - start_time)))
 oriParsCountDic = {}
 subParsCountDic = {}
 subAccessionDic = {}
 oriAccessionDic = {}
-start_time = time.time()
+start_time2 = time.time()
 print('Reading metadata')
 with open('{0}'.format(args['m']), 'r') as meta:
     for line in meta:
@@ -127,12 +131,12 @@ with open('{0}'.format(args['m']), 'r') as meta:
                     subAccessionDic[sp[indexPosSub]].append(sp[2])
             except IndexError:
                 pass
-print('metadata took {0} seconds'.format((time.time() - start_time)))
+print('metadata took {0} seconds'.format((time.time() - start_time2)))
 
 #if args['metaflag'] == 'TRUE':
     
 
-start_time = time.time()
+#start_time = time.time()
 
 print('Writing output files')
 with open('{0}/flagged_snps_by_lab.tsv'.format(args['o']), 'w') as f:
@@ -179,13 +183,13 @@ susDic = {}
 with open('{0}/flagged_snps_by_lab.tsv'.format(args['o']), 'a') as f:
     for ori in refDic:
         for snp in refDic[ori]:
-            oddsratio, pvalue = stats.fisher_exact(np.array([[refDic[ori][snp],altDic[ori][snp]],[globalRefCountDic[snp],globalAltCountDic[snp]]]))
+            oddsratio, pvalue = stats.fisher_exact(np.array([[globalRefCountDic[snp]-refDic[ori][snp],refDic[ori][snp]],[globalAltCountDic[snp]-altDic[ori][snp],altDic[ori][snp]]]))
             MAF = float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp]))
             if (float(altDic[ori][snp])/float(globalAltCountDic[snp]) >= 0.5):
-                trashDic[snp] = '{0} of alternate allele calls stem from {1}'.format(float(altDic[ori][snp])/float(globalAltCountDic[snp]), ori)
+                trashDic[snp] = '{0}% of alternate allele calls stem from {1}'.format(round(float(altDic[ori][snp])/float(globalAltCountDic[snp])*100,2), ori)
                 f.write('trash\tsubmitting lab\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n'.format(ori, snp, refDic[ori][snp], altDic[ori][snp], globalRefCountDic[snp], globalAltCountDic[snp],pvalue,float(altDic[ori][snp])/float(globalAltCountDic[snp]),float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp])) ))
 
-            elif (pvalue < 0.05 and MAF < 0.01 and float(altDic[ori][snp])/float(globalAltCountDic[snp]) > 0.1 and args['b'] == 'TRUE'):
+            elif (pvalue < 0.05 and MAF < 0.01 and float(altDic[ori][snp])/float(globalAltCountDic[snp]) > 0.1 and args['b'] == 'TRUE' and snp not in trashDic):
                 f.write('suspicious\tsubmitting lab\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n'.format(ori, snp, refDic[ori][snp], altDic[ori][snp], globalRefCountDic[snp], globalAltCountDic[snp],pvalue,float(altDic[ori][snp])/float(globalAltCountDic[snp]),float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp])) ))
                 susDic[snp] = 'Minor allele frequency is {0} and {1} contributes a suspiciously large proportion of minor allele calls (p = {2})'.format(MAF, ori, pvalue)
 altDic = {}
@@ -226,13 +230,13 @@ with open('{0}/flagged_snps_by_lab.tsv'.format(args['o']), 'a') as f:
     for ori in refDic:
         for snp in refDic[ori]:
             MAF = float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp]))
-            oddsratio, pvalue = stats.fisher_exact(np.array([[refDic[ori][snp],altDic[ori][snp]],[globalRefCountDic[snp],globalAltCountDic[snp]]]))
+            oddsratio, pvalue = stats.fisher_exact(np.array([[globalRefCountDic[snp]-refDic[ori][snp],refDic[ori][snp]],[globalAltCountDic[snp]-altDic[ori][snp],altDic[ori][snp]]]))
 
             if (float(altDic[ori][snp])/float(globalAltCountDic[snp]) >= 0.5):
-                trashDic[snp] = '{0} of alternate allele calls stem from {1}'.format(float(altDic[ori][snp])/float(globalAltCountDic[snp]), ori)
+                trashDic[snp] = '{0}% of alternate allele calls stem from {1}'.format(round(float(altDic[ori][snp])/float(globalAltCountDic[snp])*100,2), ori)
                 f.write('trash\toriginating lab\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n'.format(ori, snp, refDic[ori][snp], altDic[ori][snp], globalRefCountDic[snp], globalAltCountDic[snp],pvalue,float(altDic[ori][snp])/float(globalAltCountDic[snp]),float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp])) ))
 
-            elif (pvalue < 0.05 and MAF < 0.01 and float(altDic[ori][snp])/float(globalAltCountDic[snp]) > 0.1 and args['b'] == 'TRUE'):
+            elif (pvalue < 0.05 and MAF < 0.01 and float(altDic[ori][snp])/float(globalAltCountDic[snp]) > 0.1 and args['b'] == 'TRUE' and snp not in trashDic):
                 f.write('suspicious\toriginating lab\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n'.format(ori, snp, refDic[ori][snp], altDic[ori][snp], globalRefCountDic[snp], globalAltCountDic[snp],pvalue,float(altDic[ori][snp])/float(globalAltCountDic[snp]),float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp])) ))
                 susDic[snp] = 'Minor allele frequency is {0} and {1} contributes a suspiciously large proportion of minor allele calls (p = {2})'.format(MAF, ori, pvalue)
 
@@ -245,4 +249,6 @@ with open('{0}/flagged_snps_summary.tsv'.format(args['o']), 'w') as f:
         for snp in susDic:
             f.write('{0}\tsuspicious\t{1}\n'.format(snp, susDic[snp]))
 
+
+print('That all took like {0} minutes... I should probably write better code'.format((int(time.time() - start_time)/float(60))))
 
