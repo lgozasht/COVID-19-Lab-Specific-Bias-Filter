@@ -19,6 +19,8 @@ Options:
 
 -b If "TRUE" program will also flag borderline suspicious variants that exhibit low minor allele frequency and are significantly assosiated with 1 or more particular lab.
 
+-min Minimum parsimony (must be an integer) default = 6
+
 Output:
 
 flagged_snps_by_lab.tsv --a tab delimitted file displaying bin, source, lab, snp, ref, alt, global ref, global alt, fisher exact, proportion of calls, MAF for each flagged snp where:
