@@ -5,7 +5,7 @@ We also added a GISAID metadata filter, which filters errors in "submitting lab"
 
 ##########################################
 
-Lab Specific Biass Filter Usage:
+Lab Specific Bias Filter Usage:
 
 Make sure that parsimony_per_site_analysis.py and sequenceAnalyzer.py are in the same directory.
 
