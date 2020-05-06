@@ -1,5 +1,5 @@
 # COVID-19-Lab-Specific-Bias-Filter
-We developed a program in python 3 to systematically flag COVID-19 genomes for variants resulting from possible lab specific biases. The program requires a concurrent Nextstrain VCF file, Nextstrain parsimony file and GISAID metadata file as input. It outputs two tsv files: one with each flagged snp and the respective reasoning underlying the flag, and another providing more detailed information on each flagged lab.
+We developed a program in python 3 to systematically flag COVID-19 genomes for variants resulting from possible lab specific biases. The program requires a concurrent VCF file, Nextstrain parsimony file and GISAID metadata file as input. It outputs two tsv files: one with each flagged snp and the respective reasoning underlying the flag, and another providing more detailed information on each flagged lab.
 
 We also added a GISAID metadata filter, which filters errors in "submitting lab" and "originating lab" names and generates a merged metadata file.
 
@@ -9,11 +9,11 @@ Lab Specific Biass Filter Usage:
 
 Make sure that parsimony_per_site_analysis.py and sequenceAnalyzer.py are in the same directory.
 
-python3 parsimony_per_site_analysis.py [options] -m [Path to GISAID metadata file] -p [Path to Nextrain parsimony file] -v [Path to Nextrain VCF file] -o [Path to output directory]
+python3 parsimony_per_site_analysis.py [options] -m [Path to GISAID metadata file] -p [Path to Nextrain parsimony file] -v [Path to VCF file] -o [Path to output directory]
 
 Input:
 
-GISAID metadata file, Nextrain parsimony file and Nextrain VCF file
+GISAID metadata file, Nextrain parsimony file and VCF file
 
 Options:
 
