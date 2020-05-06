@@ -1,3 +1,12 @@
+"""
+
+Created on Fri May 1 2020
+
+@author: landengozashti
+
+"""
+
+
 oriDic = {}
 subDic = {}
 title  = ""
