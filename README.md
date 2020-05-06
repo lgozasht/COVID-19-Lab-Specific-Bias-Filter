@@ -7,7 +7,7 @@ We also added a GISAID metadata filter, which filters errors in "submitting lab"
 
 Lab Specific Bias Filter Usage:
 
-Make sure that parsimony_per_site_analysis.py and sequenceAnalyzer.py are in the same directory.
+Make sure that parsimony_per_site_analysis.py and sequenceAnalyzer.py are in the same directory. We provide the files we used when running the program.
 
 python3 parsimony_per_site_analysis.py [options] -m [Path to GISAID metadata file] -p [Path to Nextrain parsimony file] -v [Path to VCF file] -o [Path to output directory]
 
@@ -52,6 +52,8 @@ flagged_snps_summary.tsv --a tab delimitted file displaying each flagged snp, bi
 ##########################################
 
 GISAID metadata filter Usage:
+
+We provide our metadata_1_merged.tsv output along with the our log file when we used metadata_1.tsv as input. We hand checked the log file by hand to ensure accuracy and commented out merger errors.
 
 python3 meta_data_filter.py [options] -m [Path to GISAID metadata file] -o [Path to output directory]
 
