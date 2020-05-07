@@ -17,7 +17,9 @@ GISAID metadata file, Nextrain parsimony file and VCF file
 
 Options:
 
--b If "TRUE" program will also flag borderline suspicious variants that exhibit low minor allele frequency and are significantly assosiated with 1 or more particular lab.
+-b Program will also flag borderline suspicious variants that exhibit low minor allele frequency and are significantly assosiated with 1 or more particular lab.
+
+-include_others Snps with parsimony > min will be included in the output regardless of flags
 
 -min Minimum parsimony (must be an integer) default = 6
 
