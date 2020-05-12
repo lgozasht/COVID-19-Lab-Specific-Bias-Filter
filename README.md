@@ -9,7 +9,7 @@ Lab Specific Bias Filter Usage:
 
 Make sure that parsimony_per_site_analysis.py and sequenceAnalyzer.py are in the same directory. We provide the files we used when running the program.
 
-python3 parsimony_per_site_analysis.py [options] -m [Path to GISAID metadata file] -p [Path to Nextrain parsimony file] -v [Path to VCF file] -o [Path to output directory]
+python3 parsimony_per_site_analysis2.py [options] -m [Path to GISAID metadata file] -p [Path to Nextrain parsimony file] -v [Path to VCF file] -o [Path to output directory]
 
 Input:
 
@@ -17,17 +17,23 @@ GISAID metadata file, Nextrain parsimony file and VCF file
 
 Options:
 
--b Program will also flag borderline suspicious variants that exhibit low minor allele frequency and are significantly assosiated with 1 or more particular lab.
+-b                   Program will also flag borderline suspicious variants that exhibit low minor allele frequency and are                          significantly assosiated with 1 or more particular lab.
 
--include_others Snps with parsimony > min will be included in the output regardless of flags
+-include             Snps with parsimony > min will be included in the output regardless of flags
 
--min Minimum parsimony (must be an integer) default = 6
+-min_parsimony       Minimum parsimony (must be an integer) default = 4 (Beware that reducing this parameter from the default
+                     can obscure accuracy)
+
+-min_contribution    Minimum percent of alternate alleles contributed by a
+                     specific lab for variants to be considered highly
+                     suspect; default = 80 (beware that reducing this
+                     parameter from the default can obscure accuracy)
 
 Output:
 
-flagged_snps_by_lab.tsv --a tab delimitted file displaying bin, source, lab, snp, ref, alt, global ref, global alt, fisher exact, proportion of calls, MAF for each flagged snp where:
+flagged_snps_by_lab.tsv    A tab delimitted file displaying bin, source, lab, snp, ref, alt, global ref, global alt, fisher                              exact, proportion of calls, MAF for each flagged snp where:
 
-bin = "trash" or "suspicious" trash variants are likely lab-specific artefacts since, and suspicious mutations are borderline cases which can also be explained by high mutation rate 
+bin = "highly suspect", "suspect," or "no flag" 
 
 source = "originating lab" or "submitting lab"
 
@@ -49,7 +55,7 @@ proportion of calls = proportion of minor allele calls attributed to respective 
 
 MAF = minor allele frequency
 
-flagged_snps_summary.tsv --a tab delimitted file displaying each flagged snp, bin and the reasoning underlying the flag
+flagged_snps_summary.tsv   A tab delimitted file displaying each flagged snp, bin and the reasoning underlying the flag
 
 ##########################################
 
@@ -65,12 +71,12 @@ GISAID metadata file
 
 Options:
 
--c If TRUE only merge high confidence errors.
+-c     If "TRUE" only merge high confidence errors.
 
 Output:
 
-metadata_filter.log --log of changes made to the metadata set and warnings if any changes are made with lower confidence
+metadata_filter.log     Log of changes made to the metadata set and warnings if any changes are made with lower confidence
 
-metadata_merged.tsv --merged metadata file
+metadata_merged.tsv     Merged metadata file
 
 
