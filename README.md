@@ -21,6 +21,8 @@ Options:
 
 -include             Snps with parsimony > min will be included in the output regardless of flags
 
+-track               Program will output a track annotating highly suspect lab assosiated mutations and a track annotating                          Artic primers that overlap or are within 10bp of lab-associated mutations in BED Detail format. Both                          tracks can be directly uploaded to the UCSC Genome Browser.  
+
 -min_parsimony       Minimum parsimony (must be an integer) default = 4 (Beware that reducing this parameter from the default
                      can obscure accuracy)
 
@@ -56,6 +58,10 @@ proportion of calls = proportion of minor allele calls attributed to respective 
 MAF = minor allele frequency
 
 flagged_snps_summary.tsv   A tab delimitted file displaying each flagged snp, bin and the reasoning underlying the flag
+
+lab_associated_error_final.bed     A BED Detail file annotating lab-associated mutations compatable with the UCSC Genome                                        Browser
+
+Artic_primers_final.bed     A BED Detail file annotating Artic Primers compatable with the UCSC Genome Browser
 
 ##########################################
 
