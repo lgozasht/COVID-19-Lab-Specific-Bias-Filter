@@ -70,7 +70,8 @@ parser.add_argument('-include', nargs='?',const='T', default=None,
                     help='Include all mutations with parsimony > min_parsimony regardless of flags')
 parser.add_argument('-min_contribution', nargs='?',
                     help='Minimum percent of alternate alleles contributed by a specific lab for variants to be considered highly suspect; default = 80 (beware that reducing this parameter from the default can obscure accuracy)') 
-
+parser.add_argument('-track', nargs='?',const='T', default=None,
+                    help='Program will output a track annotating highly suspect lab assosiated mutations and a track annotating Artic primers that overlap or are within 10bp of lab-associated mutations in BED Detail format. Both can be directly uploaded to the UCSC Genome Browser.')
 
 
 args = vars(parser.parse_args())
@@ -81,7 +82,7 @@ if args['min_contribution'] == None:
 else:
     args['min_contribution'] = float(args['min_contribution'])/100.0
 
-
+refChrom = 'NC_045512v2'
 parsimonyDic = {}
 sourceList = []
 sourceDic = {}
@@ -194,13 +195,15 @@ trashDic = {}
 susDic = {}
 compDic = {}
 otherDic = {}
-
+mafDic = {}
 
 with open('{0}/flagged_snps_by_lab.tsv'.format(args['o']), 'a') as f:
     for ori in refDic:
         for snp in refDic[ori]:
             oddsratio, pvalue = stats.fisher_exact(np.array([[globalRefCountDic[snp]-refDic[ori][snp],refDic[ori][snp]],[globalAltCountDic[snp]-altDic[ori][snp],altDic[ori][snp]]]))
             MAF = float(globalAltCountDic[snp])/(float(globalAltCountDic[snp])+ float(globalRefCountDic[snp]))
+            mafDic[snp] = MAF
+
             if (float(altDic[ori][snp])/float(globalAltCountDic[snp]) > args['min_contribution']):
                 if snp not in compDic or float(altDic[ori][snp])/float(globalAltCountDic[snp]) > compDic[snp]:
                     compDic[snp] = float(altDic[ori][snp])/float(globalAltCountDic[snp])
@@ -281,6 +284,62 @@ with open('{0}/flagged_snps_summary.tsv'.format(args['o']), 'w') as f:
             if snp not in susDic and snp not in trashDic:
                 f.write('{0}\tno flag\t{1}\n'.format(snp, otherDic[snp]))
 
+if args['track'] != None:
+    primerTrackList = []
+    primerDic = {}
+    with open('primers.txt', 'r') as primeFile:
+        for line in primeFile:
 
-print('That all took like {0} minutes... I should probably write better code'.format(int(round((time.time() - start_time)/float(60),0))))
+            for snp in trashDic:
+
+                sp = line.split('\t')
+                if int(snp[1:-1]) > (int(sp[1]) - 10) and int(snp[1:-1]) < (int(sp[2]) + 10):
+                    primerTrackList.append(line)
+                    if snp not in primerDic:
+                        primerDic[snp] = sp[3]
+                    else:
+                        primerDic[snp] += (',' + sp[3])
+
+    with open('{0}/lab_associated_error.bed'.format(args['o']), 'w') as f:
+        for snp in trashDic:
+            if snp in primerDic:
+                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{8}\t{7}\t{6}\n'.format(refChrom, str(int(snp[1:-1])-1),snp[1:-1],snp.replace('T','U'), parsimonyDic[snp[1:-1]].strip('\n'),globalAltCountDic[snp],trashDic[snp],primerDic[snp],mafDic[snp]))
+            else:
+                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{8}\t{7}\t{6}\n'.format(refChrom, str(int(snp[1:-1])-1),snp[1:-1],snp.replace('T','U'), parsimonyDic[snp[1:-1]].strip('\n'),globalAltCountDic[snp],trashDic[snp],'NA',mafDic[snp]))
+    with open('{0}/Artic_primers.bed'.format(args['o']), 'w') as f:
+        for line in primerTrackList:
+            f.write('{0}\t{1}\t{2}\t{3}\n'.format(refChrom, line.split('\t')[1], line.split('\t')[2], line.split('\t')[3]))
+    os.system('sort -k1,1 -k2,2n {0}/Artic_primers.bed > {0}/Artic_primers_sorted.bed'.format(args['o']))
+    os.system('sort -k1,1 -k2,2n {0}/lab_associated_error.bed > {0}/lab_associated_error_sorted.bed'.format(args['o']))
+
+    os.system('rm -r {0}/lab_associated_error.bed'.format(args['o']))
+    os.system('rm -r {0}/Artic_primers.bed'.format(args['o']))
+
+
+    with open('{0}/lab_associated_error_sorted.bed'.format(args['o']),'r') as sorted:
+        lineList = []
+        for line in sorted:
+            lineList.append(line)
+
+    with open('{0}/lab_associated_error_final.bed'.format(args['o']),'w') as final:
+        final.write('browser position NC_045512v2:0-29903\ntrack name=lab type=bedDetail description="Lab-associated Mutations"\n#chrom\tchromStart\tchromStop\tname\tparsimony score\tnumber of alt alleles\tPrimer within 10bp\tcomment\n')
+        for line in lineList:
+            final.write(line)
+
+    os.system('rm -r {0}/lab_associated_error_sorted.bed'.format(args['o']))
+
+    with open('{0}/Artic_primers_sorted.bed'.format(args['o']),'r') as sorted:
+        lineList = []
+        for line in sorted:
+            lineList.append(line)
+    with open('{0}/Artic_primers_final.bed'.format(args['o']),'w') as final:
+        final.write('browser position NC_045512v2:0-29903\ntrack name=lab type=bedDetail description="Artic Primers"\n#chrom\tchromStart\tchromStop\tname\n')
+        for line in lineList:
+            final.write(line)
+    os.system('rm -r {0}/Artic_primers_sorted.bed'.format(args['o']))
+
+
+
+
+print('That all took like {0} minutes... sorry for the wait'.format(int(round((time.time() - start_time)/float(60),0))))
 
