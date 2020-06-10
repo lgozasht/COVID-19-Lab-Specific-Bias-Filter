@@ -21,7 +21,7 @@ Options:
 
 -include             Snps with parsimony > min will be included in the output regardless of flags
 
--track               Program will output a track annotating highly suspect lab assosiated mutations and a track annotating                          Artic primers that overlap or are within 10bp of lab-associated mutations in BED Detail format. Both                          tracks can be directly uploaded to the UCSC Genome Browser.  
+-track               Program will output a track annotating highly suspect lab assosiated mutations and a track annotating                          Artic primers that overlap or are within 10bp of lab-associated mutations in BED Detail format. Both                          tracks can be directly uploaded to the UCSC Genome Browser. The user must also download "primers.txt"                          (available in this repository) and store it in the current working directory.
 
 -min_parsimony       Minimum parsimony (must be an integer) default = 4 (Beware that reducing this parameter from the default
                      can obscure accuracy)
