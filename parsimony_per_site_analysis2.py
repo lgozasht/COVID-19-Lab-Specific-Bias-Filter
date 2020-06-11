@@ -88,6 +88,7 @@ sourceList = []
 sourceDic = {}
 totalParsimoniousmutationCount = 0
 parsimonySourceDic = {}
+aaChangeDic = {}
 
 print('Reading parsimony file')
 with open('{0}'.format(args['p']), 'r') as f:
@@ -125,9 +126,14 @@ with open(args['v'], 'r') as vcf:
                 for i in range(9,len(cols)):
                     epiId = sourceList[i].split('|')[0]
                     parsimonySourceDic[mut][epiId] = cols[i].split(':')[0]
+                info = cols[7]
+                infoParts = dict([ part.split('=') for part in info.split(';')  ])
+                if ('AACHANGE' in infoParts):
+                    aaChangeDic[mut] = infoParts['AACHANGE']
 
 
 print('VCF took {0} seconds'.format(time.time() - start_time))
+
 oriParsCountDic = {}
 subParsCountDic = {}
 subAccessionDic = {}
@@ -306,10 +312,13 @@ if args['track'] != None:
 
     with open('{0}/lab_associated_error.bed'.format(args['o']), 'w') as f:
         for snp in trashDic:
-            if snp in primerDic:
-                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{8}\t{7}\t{6}\n'.format(refChrom, str(int(snp[1:-1])-1),snp[1:-1],snp.replace('T','U'), parsimonyDic[snp[1:-1]].strip('\n'),globalAltCountDic[snp],trashDic[snp],primerDic[snp],mafDic[snp]))
-            else:
-                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{8}\t{7}\t{6}\n'.format(refChrom, str(int(snp[1:-1])-1),snp[1:-1],snp.replace('T','U'), parsimonyDic[snp[1:-1]].strip('\n'),globalAltCountDic[snp],trashDic[snp],'NA',mafDic[snp]))
+            pos = snp[1:-1]
+            primer = primerDic[snp] if snp in primerDic else 'NA'
+            aaChange = aaChangeDic[snp] if snp in aaChangeDic else 'NA'
+            f.write('\t'.join([ refChrom, str(int(pos)-1), pos, snp.replace('T', 'U'),
+                                parsimonyDic[pos].strip('\n'), str(globalAltCountDic[snp]),
+                                str(mafDic[snp]), primer, aaChange, trashDic[snp] ]) + '\n')
+
     with open('{0}/Artic_primers.bed'.format(args['o']), 'w') as f:
         for line in primerTrackList:
             f.write('{0}\t{1}\t{2}\t{3}\n'.format(refChrom, line.split('\t')[1], line.split('\t')[2], line.split('\t')[3]))
@@ -329,7 +338,7 @@ if args['track'] != None:
         final.write('browser position NC_045512v2:0-29903\ntrack name=lab type=bedDetail description="Lab-associated Mutations" visibility=pack\n#chrom\tchromStart\tchromStop\tname\tparsimony score\tnumber of alt alleles\tminor allele frequency\tPrimer within 10bp\tcomment\n')
         for line in lineList:
             cols = line.split("\t")
-            bedDetailCols = cols[0:4] + [cols[3]] + [cols[8]]
+            bedDetailCols = cols[0:4] + cols[8:10]
             final.write('\t'.join(bedDetailCols))
 
     with open('{0}/lab_associated_error_final.bedForBigBed'.format(args['o']),'w') as final:
