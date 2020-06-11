@@ -303,7 +303,11 @@ if args['track'] != None:
             for snp in trashDic:
 
                 sp = line.split('\t')
-                if int(snp[1:-1]) > (int(sp[1]) - 10) and int(snp[1:-1]) < (int(sp[2]) + 10):
+                if ',' in snp:
+                    pos = snp.split(',')[0][1:-1]
+                else:
+                    pos = snp[1:-1]
+                if int(pos) > (int(sp[1]) - 10) and int(pos) < (int(sp[2]) + 10):
                     primerTrackList.append(line)
                     if snp not in primerDic:
                         primerDic[snp] = sp[3]
@@ -312,7 +316,8 @@ if args['track'] != None:
 
     with open('{0}/lab_associated_error.bed'.format(args['o']), 'w') as f:
         for snp in trashDic:
-            pos = snp[1:-1]
+            if ',' in snp:
+                pos = snp.split(',')[0][1:-1]
             primer = primerDic[snp] if snp in primerDic else 'NA'
             aaChange = aaChangeDic[snp] if snp in aaChangeDic else 'NA'
             f.write('\t'.join([ refChrom, str(int(pos)-1), pos, snp.replace('T', 'U'),
