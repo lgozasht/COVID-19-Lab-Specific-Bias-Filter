@@ -53,13 +53,13 @@ Path to nextrain VCF file
 """
 
 
-parser = argparse.ArgumentParser(description='Flag suspicious variants in COVID-19 genomic data (Talk to Russ and I nice)')
+parser = argparse.ArgumentParser(description='Flag suspicious lab-associated variants in COVID-19 genomic data')
 parser.add_argument('-m', nargs='?', required=True,
-                    help='Path to metadata file')
+                    help='Path to GISAID metadata file')
 parser.add_argument('-p', nargs='?', required=True,
-                    help='Path to nextrain parsimony file')
+                    help='Path to parsimony file')
 parser.add_argument('-v', nargs='?', required=True,
-                    help='Path to nextrain VCF file')
+                    help='Path to VCF file')
 parser.add_argument('-o', nargs='?', required=True,
                     help='Path to output directory')
 parser.add_argument('-b', nargs='?',const='T', default=None,
@@ -71,7 +71,7 @@ parser.add_argument('-include', nargs='?',const='T', default=None,
 parser.add_argument('-min_contribution', nargs='?',
                     help='Minimum percent of alternate alleles contributed by a specific lab for variants to be considered highly suspect; default = 80 (beware that reducing this parameter from the default can obscure accuracy)') 
 parser.add_argument('-track', nargs='?',const='T', default=None,
-                    help='Program will output a track annotating highly suspect lab assosiated mutations and a track annotating Artic primers that overlap or are within 10bp of lab-associated mutations in BED Detail format. Both can be directly uploaded to the UCSC Genome Browser.')
+                    help='Program will output a custom track annotating highly suspect lab assosiated mutations and a custom track annotating Artic primers that overlap or are within 10bp of lab-associated mutations in BED Detail format. Both can be directly uploaded to the UCSC Genome Browser. It will also output a bed file containing more information on each lab-associated mutation that can be converted to a binary bigBed file and uploaded as a custom track on the UCSC Genome Browser.')
 
 
 args = vars(parser.parse_args())
