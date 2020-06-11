@@ -325,8 +325,14 @@ if args['track'] != None:
         for line in sorted:
             lineList.append(line)
 
-    with open('{0}/lab_associated_error_final.bed'.format(args['o']),'w') as final:
-        final.write('browser position NC_045512v2:0-29903\ntrack name=lab type=bedDetail description="Lab-associated Mutations"\n#chrom\tchromStart\tchromStop\tname\tparsimony score\tnumber of alt alleles\tPrimer within 10bp\tcomment\n')
+    with open('{0}/lab_associated_error_final.bedDetail'.format(args['o']),'w') as final:
+        final.write('browser position NC_045512v2:0-29903\ntrack name=lab type=bedDetail description="Lab-associated Mutations" visibility=pack\n#chrom\tchromStart\tchromStop\tname\tparsimony score\tnumber of alt alleles\tminor allele frequency\tPrimer within 10bp\tcomment\n')
+        for line in lineList:
+            cols = line.split("\t")
+            bedDetailCols = cols[0:4] + [cols[3]] + [cols[8]]
+            final.write('\t'.join(bedDetailCols))
+
+    with open('{0}/lab_associated_error_final.bedForBigBed'.format(args['o']),'w') as final:
         for line in lineList:
             final.write(line)
 
@@ -337,7 +343,7 @@ if args['track'] != None:
         for line in sorted:
             lineList.append(line)
     with open('{0}/Artic_primers_final.bed'.format(args['o']),'w') as final:
-        final.write('browser position NC_045512v2:0-29903\ntrack name=lab type=bedDetail description="Artic Primers"\n#chrom\tchromStart\tchromStop\tname\n')
+        final.write('browser position NC_045512v2:0-29903\ntrack name=primers type=bed description="Artic Primers" visibility=pack\n#chrom\tchromStart\tchromStop\tname\n')
         for line in lineList:
             final.write(line)
     os.system('rm -r {0}/Artic_primers_sorted.bed'.format(args['o']))
