@@ -19,18 +19,18 @@ GISAID metadata file, Nextrain parsimony file and VCF file; for -track option, a
 
 ### Options:
 
-`-b T`                 Program will also flag borderline suspicious variants that exhibit low minor allele frequency and are                          significantly associated with 1 or more particular lab.
+**-b T**:            Program will also flag borderline suspicious variants that exhibit low minor allele frequency and are significantly associated with 1 or more particular lab.
 
-`-include T`           Snps with parsimony > min will be included in the output regardless of flags
+**-include T**:      Snps with parsimony > min will be included in the output regardless of flags
 
-`-track`               Program will output a track annotating highly suspect lab associated mutations and a track annotating                          Artic primers that overlap or are within 10bp of lab-associated mutations.
+**-track**:          Program will output a track annotating highly suspect lab associated mutations and a track annotating                          Artic primers that overlap or are within 10bp of lab-associated mutations.
                      See [Viewing tracks in the UCSC Genome Browser](#viewing-tracks-in-the-UCSC-Genome-Browser) below for instructions.
                      The file "primers.txt" (available in this repository) must be present in the current working directory.
 
-`-min_parsimony *I*`    Minimum parsimony (must be an integer) default = 4 (Beware that reducing this parameter from the default
+**-min_parsimony *I***: Minimum parsimony (must be an integer) default = 4 (Beware that reducing this parameter from the default
                      can obscure accuracy)
 
-`-min_contribution *N*` Minimum percent of alternate alleles contributed by a
+**-min_contribution *N***: Minimum percent of alternate alleles contributed by a
                      specific lab for variants to be considered highly
                      suspect; default = 80 (beware that reducing this
                      parameter from the default can obscure accuracy)
