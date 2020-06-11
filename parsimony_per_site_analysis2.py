@@ -117,13 +117,17 @@ with open(args['v'], 'r') as vcf:
             pass
         elif '#' in line:
             sourceList = line.split('\t')
-        elif line.split('\t')[1] in parsimonyDic:
-            parsimonySourceDic['{0}'.format(line.split('\t')[2])] = {}
-            for i in range(9,len(line.split('\t'))):
-                parsimonySourceDic['{0}'.format(line.split('\t')[2])][sourceList[i].split('|')[0]] = line.split('\t')[i].split(':')[0]
+        else:
+            cols = line.split('\t')
+            (pos, mut) = (cols[1], cols[2])
+            if pos in parsimonyDic:
+                parsimonySourceDic[mut] = {}
+                for i in range(9,len(cols)):
+                    epiId = sourceList[i].split('|')[0]
+                    parsimonySourceDic[mut][epiId] = cols[i].split(':')[0]
 
 
-print('VCF took {0} minutes, thats annoying'.format(int(round((time.time() - start_time)/float(60),0))))
+print('VCF took {0} seconds'.format(time.time() - start_time))
 oriParsCountDic = {}
 subParsCountDic = {}
 subAccessionDic = {}
