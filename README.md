@@ -10,7 +10,7 @@ We also added a GISAID metadata filter, which filters errors in "submitting lab"
 Make sure that parsimony_per_site_analysis.py and sequenceAnalyzer.py are in the same directory. We provide the files we used when running the program.
 
 ```
-python3 parsimony_per_site_analysis2.py [options] -m [Path to GISAID metadata file] -p [Path to Nextrain parsimony file] -v [Path to VCF file] -o [Path to output directory]
+python3 parsimony_per_site_analysis3.py [options] -m [Path to GISAID metadata file] -p [Path to Nextrain parsimony file] -v [Path to VCF file] -o [Path to output directory]
 ```
 
 ### Input:
@@ -34,6 +34,8 @@ GISAID metadata file, Nextrain parsimony file and VCF file; for -track option, a
                      specific lab for variants to be considered highly
                      suspect; default = 80 (beware that reducing this
                      parameter from the default can obscure accuracy)
+                    
+**-fast**:           (highly recommended) Program will only consider highly suspicious lab-associated mutations and will not                         output flagged_snps_by_lab.tsv. However, it will run much faster!
 
 ### Output:
 
