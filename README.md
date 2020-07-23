@@ -1,4 +1,7 @@
 # COVID-19-Lab-Specific-Bias-Filter
+See also SARS-COV-2_COLLETIVE_ANALYSIS
+
+
 We developed a program in python 3 to systematically flag COVID-19 genomes for variants resulting from possible lab specific biases. The program requires a concurrent VCF file, Nextstrain parsimony file and GISAID metadata file as input. It outputs two tsv files: one with each flagged snp and the respective reasoning underlying the flag, and another providing more detailed information on each flagged lab.
 
 We also added a GISAID metadata filter, which filters errors in "submitting lab" and "originating lab" names and generates a merged metadata file.
