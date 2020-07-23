@@ -3,7 +3,7 @@ We developed a program in python 3 to systematically flag COVID-19 genomes for v
 
 We also added a GISAID metadata filter, which filters errors in "submitting lab" and "originating lab" names and generates a merged metadata file.
 
-##########################################
+
 
 ## Lab Specific Bias Filter Usage:
 
